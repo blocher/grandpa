@@ -1,0 +1,5 @@
+Always use the existing virtual environment located at `.venv` instead of creating a new one.
+- To activate: `source .venv/bin/activate`
+- Do not create `venv` or other virtual environments.
+- If dependencies are missing, install them into `.venv`.
+
