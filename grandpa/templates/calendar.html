@@ -103,9 +103,12 @@
         }
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
+            initialView: 'listDay',
             {% if initial_date %}
-            initialDate: '{{ initial_date }}', // Only set if provided
+            initialDate: '{{ initial_date }}',
+            {% endif %}
+            {% if now_date %}
+            now: '{{ now_date }}',
             {% endif %}
             views: {
                 dayGridMonth: { buttonText: 'Month' },

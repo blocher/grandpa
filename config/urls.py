@@ -16,9 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from grandpa.api import api
+from grandpa import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", api.urls),
     path("calendar/", include("grandpa.urls")),
+    path("messages/today", views.messages_today),
+    path("messages/tomorrow", views.messages_tomorrow),
 ]

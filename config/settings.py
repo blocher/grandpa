@@ -24,10 +24,10 @@ load_dotenv(BASE_DIR / '.env')
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&r8ch@s*==ncb)d67(8ij#xif@i39o612lhr$tfg+0=+0il4b!'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Chicago'
 
 USE_I18N = True
 
@@ -142,3 +142,7 @@ TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 TWILIO_PARTICIPANTS = os.getenv('TWILIO_PARTICIPANTS', '').split(',')
+
+SITE_URL = os.getenv('SITE_URL', 'http://127.0.0.1:8000')
+
+FAKE_DATE = os.getenv('FAKE_DATE')
