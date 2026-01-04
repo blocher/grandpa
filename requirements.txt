@@ -8,3 +8,4 @@ Pillow
 pillow-heif
 pydantic
 django-ninja
+twilio==9.9.0
