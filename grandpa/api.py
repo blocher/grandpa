@@ -30,12 +30,46 @@ class CalendarEventSchema(Schema):
         return obj.calendar_month.year
 
 @api.get("/events", response=List[CalendarEventSchema])
-def list_events(request, month: Optional[int] = None, day: Optional[int] = None, year: Optional[int] = None, scope: str = "day"):
+def list_events(request, 
+                month: Optional[int] = None, 
+                day: Optional[int] = None, 
+                year: Optional[int] = None, 
+                scope: str = "day",
+                start: Optional[str] = None,
+                end: Optional[str] = None):
     qs = CalendarEvent.objects.all().select_related('calendar_month')
 
     # Default to current year if not provided, for date calculations
     current_year = year or datetime.now().year
-    
+
+    if start and end:
+        try:
+            # FullCalendar sends ISO strings like '2023-09-01T00:00:00-05:00'
+            # We strip time/timezone for simpler date handling
+            start_date = datetime.fromisoformat(start.replace("Z", "+00:00")).date()
+            end_date = datetime.fromisoformat(end.replace("Z", "+00:00")).date()
+            
+            # Filter for months that overlap with the range
+            q_filter = Q()
+            curr = start_date.replace(day=1)
+            # Adjust end_date to include the full month of the end date
+            target_end_month = end_date.replace(day=1)
+            
+            while curr <= target_end_month:
+                q_filter |= Q(calendar_month__year=curr.year, calendar_month__month=curr.month)
+                
+                # Move to next month
+                if curr.month == 12:
+                    curr = curr.replace(year=curr.year + 1, month=1)
+                else:
+                    curr = curr.replace(month=curr.month + 1)
+            
+            qs = qs.filter(q_filter)
+            
+        except Exception as e:
+            # If parsing fails, ignore start/end and fall back to other filters
+            pass
+
     if scope == "week" and month and day:
         # Week filtering logic
         try:
