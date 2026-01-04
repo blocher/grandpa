@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from datetime import datetime, timedelta
@@ -6,6 +6,9 @@ from zoneinfo import ZoneInfo
 import calendar
 from .models import CalendarEvent
 from .utils import get_current_date
+
+def redirect_to_calendar(request, exception=None):
+    return redirect('/calendar/')
 
 def calendar_view(request, year=None, month=None, day=None):
     # Pass initial date to template if provided

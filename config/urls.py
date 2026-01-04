@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.generic import RedirectView
 from grandpa.api import api
 from grandpa import views
 
@@ -22,6 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", api.urls),
     path("calendar/", include("grandpa.urls")),
+    path('', RedirectView.as_view(url='/calendar/', permanent=False)),
     path("messages/today", views.messages_today),
     path("messages/tomorrow", views.messages_tomorrow),
+    re_path(r'^.*$', RedirectView.as_view(url='/calendar/', permanent=False)),
 ]
+
+handler404 = 'grandpa.views.redirect_to_calendar'
