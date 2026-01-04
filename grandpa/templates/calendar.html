@@ -103,7 +103,7 @@
         }
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'listDay',
+            initialView: '{{ initial_view|default:"listDay" }}',
             {% if initial_date %}
             initialDate: '{{ initial_date }}',
             {% endif %}
@@ -191,11 +191,17 @@
                 let view = info.view.type;
                 
                 // Construct URL
-                let url = `/calendar/month/${year}/${month}/`;
+                let url;
+                if (view === 'listDay' || view === 'timeGridDay' || view === 'dayGridDay') {
+                     let day = date.getDate();
+                     url = `/calendar/day/${year}/${month}/${day}/`;
+                } else {
+                     url = `/calendar/month/${year}/${month}/`;
+                }
                 
                 // Update browser history without reload
                 // Only push if it's different to prevent spamming history on initial load
-                if (window.location.pathname !== url && (info.view.type === 'dayGridMonth' || info.view.type === 'listMonth')) {
+                if (window.location.pathname !== url) {
                     history.pushState({}, '', url);
                 }
             }

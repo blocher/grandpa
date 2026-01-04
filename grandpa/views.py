@@ -7,16 +7,22 @@ import calendar
 from .models import CalendarEvent
 from .utils import get_current_date
 
-def calendar_view(request, year=None, month=None):
+def calendar_view(request, year=None, month=None, day=None):
     # Pass initial date to template if provided
     context = {}
     if year and month:
-        context['initial_date'] = f"{year}-{month:02d}-01"
+        if day:
+             context['initial_date'] = f"{year}-{month:02d}-{day:02d}"
+             context['initial_view'] = 'listDay'
+        else:
+             context['initial_date'] = f"{year}-{month:02d}-01"
+             context['initial_view'] = 'dayGridMonth'
     else:
         # If no date provided in URL, use our custom current date logic
         current_date = get_current_date()
         context['initial_date'] = current_date.strftime("%Y-%m-%d")
         context['now_date'] = current_date.strftime("%Y-%m-%d")
+        context['initial_view'] = 'listDay' # Default to listDay for mobile friendliness on home
 
     return render(request, 'calendar.html', context)
 
@@ -43,7 +49,7 @@ def get_events_text(target_date, title_prefix):
         lines.append("You can call the Activity Director at EXT 3244 for assistance")
         # For the URL, we might default to current month even if empty
         site_url = settings.SITE_URL.rstrip('/')
-        calendar_url = f"{site_url}/calendar/month/{year}/{month}/"
+        calendar_url = f"{site_url}/calendar/day/{year}/{month}/{day}/"
         lines.append(f"Full schedule at: {calendar_url}")
         return "\n".join(lines)
 
@@ -146,7 +152,7 @@ def get_events_text(target_date, title_prefix):
     lines.append("You can call the Activity Director at EXT 3244 for assistance")
     
     site_url = settings.SITE_URL.rstrip('/')
-    calendar_url = f"{site_url}/calendar/month/{year}/{month}/"
+    calendar_url = f"{site_url}/calendar/day/{year}/{month}/{day}/"
     lines.append(f"Full schedule at: {calendar_url}")
     
     return "\n".join(lines)
